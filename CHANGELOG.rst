@@ -15,6 +15,11 @@ in development
   a complex type (e.g. Python class instance) as a result. (bug fix)
 
   Reported by skjbulcher #3133
+* Fix cancellation specified in concurrency policies to cancel actions appropriately. Previously,
+  mistral workflow is orphaned and left in a running state. (bug fix)
+* If a retry policy is defined, action executions under the context of a workflow will not be
+  retried on timeout or failure. Previously, action execution will be retried but workflow is
+  terminated. (bug fix)
 
 2.1.1 - December 16, 2016
 -------------------------
@@ -40,8 +45,6 @@ in development
 * Update ``packs.load`` action to also register triggers by default. (improvement)
 * Update ``/v1/packs/register`` API endpoint so it registers resources in the correct order which
   is the same as order used in ``st2-register-content`` script. (bug fix)
-* Fix cancellation specified in concurrency policies to cancel actions appropriately. Previously, mistral
-  workflow is orphaned and left in a running state. (bug fix)
 
 2.1.0 - December 05, 2016
 -------------------------

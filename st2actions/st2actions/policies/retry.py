@@ -67,6 +67,16 @@ class ExecutionRetryPolicyApplicator(ResourcePolicyApplicator):
         target = super(ExecutionRetryPolicyApplicator, self).apply_after(target=target)
 
         live_action_db = target
+
+        if self._get_live_action_parent(live_action_db):
+            LOG.warning(
+                'Retry cannot be applied to this liveaction because it is executed under a '
+                'workflow. Use workflow specific retry functionality where applicable. %s',
+                live_action_db
+            )
+
+            return target
+
         retry_count = self._get_live_action_retry_count(live_action_db=live_action_db)
 
         extra = {'live_action_db': live_action_db, 'policy_ref': self._policy_ref,
@@ -111,6 +121,16 @@ class ExecutionRetryPolicyApplicator(ResourcePolicyApplicator):
             return target
 
         return target
+
+    def _get_live_action_parent(self, live_action_db):
+        """
+        Retrieve parent info from context of the live action.
+
+        :rtype: ``dict``
+        """
+        context = getattr(live_action_db, 'context', {})
+
+        return context.get('parent', {})
 
     def _get_live_action_retry_count(self, live_action_db):
         """
